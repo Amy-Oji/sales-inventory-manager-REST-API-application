@@ -21,12 +21,12 @@ public class Product {
     private double price;
 
     private String description;
-    private int availableQuantity;
+    private int amountInStock;
 
     private boolean isAvailable;
 
     public void setAvailable() {
-        if(availableQuantity > 0){
+        if(amountInStock > 0){
             isAvailable = true;
         }
     }

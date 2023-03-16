@@ -10,5 +10,5 @@ public class ProductDTO {
 
     private String description;
 
-    private int availableQuantity;
+    private int amountInStock;
 }

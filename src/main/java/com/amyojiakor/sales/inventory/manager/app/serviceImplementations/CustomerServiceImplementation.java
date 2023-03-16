@@ -12,6 +12,8 @@ import com.amyojiakor.sales.inventory.manager.app.repositories.ProductRepository
 import com.amyojiakor.sales.inventory.manager.app.services.CustomerService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,13 +30,19 @@ public class CustomerServiceImplementation implements CustomerService {
 
     private final OrderDetailsRepository orderDetailsRepository;
 
+    private final KafkaTemplate<String, CustomerOrderResponse> kafkaTemplate;
+    private final String orderTopic;
+
     @Autowired
     public CustomerServiceImplementation(OrderRepository orderRepository, ProductRepository productRepository,
-                                         CustomerRepository customerRepository, OrderDetailsRepository orderDetailsRepository) {
+                                         CustomerRepository customerRepository, OrderDetailsRepository orderDetailsRepository,
+                                         KafkaTemplate<String, CustomerOrderResponse> kafkaTemplate, @Value("${kafka.topic.order}") String orderTopic) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.customerRepository = customerRepository;
         this.orderDetailsRepository = orderDetailsRepository;
+        this.kafkaTemplate = kafkaTemplate;
+        this.orderTopic = orderTopic;
     }
 
 
@@ -45,11 +53,18 @@ public class CustomerServiceImplementation implements CustomerService {
         List<OrderDetails> orderDetailsList = new ArrayList<>();
         Map<Long, Double> productDetails = new HashMap<>();
 
-        Customer customer = new Customer();
-        customer.setName(customerOrderDTO.getCustomerName());
-        customer.setPhoneNum(customerOrderDTO.getCustomerPhoneNum());
-        customerRepository.save(customer);
-
+        if (customerOrderDTO.getCustomerPhoneNum() != null) {
+            Customer customer = customerRepository.findCustomerByPhoneNum(customerOrderDTO.getCustomerPhoneNum());
+            if (customer != null) {
+                order.setCustomer(customer);
+            } else {
+                Customer newCustomer = new Customer();
+                newCustomer.setName(customerOrderDTO.getCustomerName());
+                newCustomer.setPhoneNum(customerOrderDTO.getCustomerPhoneNum());
+                customerRepository.save(newCustomer);
+                order.setCustomer(newCustomer);
+            }
+        }
 
         Map<Long, Integer> orderProducts = customerOrderDTO.getProducts();
         double sum = 0;
@@ -60,16 +75,16 @@ public class CustomerServiceImplementation implements CustomerService {
 
             var product = productRepository.findById(productId).orElseThrow(() -> new Exception("Product with ID '"+ productId + " does not exists." +
                     " Please make your selection from our existing products"));
-            if(quantity > product.getAvailableQuantity()){
+            if(quantity > product.getAmountInStock()){
                 throw  new Exception("Product ID:" + productId + " with name: '" + product.getName() + "' is currently not available" +
                         " Please make your selection from our available products");
             }
 
-            product.setAvailableQuantity(product.getAvailableQuantity() - quantity);
+            product.setAmountInStock(product.getAmountInStock() - quantity);
             var price = product.getPrice() * quantity;
             sum = sum + price;
 
-            productDetails.put(productId, price);
+            productDetails.put(productId, product.getPrice());
 
             OrderDetails orderDetails = new OrderDetails();
             orderDetails.setProduct(product);
@@ -90,7 +105,6 @@ public class CustomerServiceImplementation implements CustomerService {
         customerOrderResponse.setOrder_date(orderTimeStr);
         customerOrderResponse.setProductDetails(productDetails);
 
-        order.setCustomer(customer);
         order.setOrder_date(orderTime);
         order.setSum(sum);
         order.setOrderDetails(orderDetailsList);
@@ -99,7 +113,7 @@ public class CustomerServiceImplementation implements CustomerService {
         for (OrderDetails orderDetail : orderDetailsList) {
             productRepository.save(orderDetail.getProduct());
         }
-
+        kafkaTemplate.send(orderTopic, customerOrderResponse);
         return customerOrderResponse;
     }
 }
