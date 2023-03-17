@@ -94,6 +94,6 @@ the Order-details hold order-related data while the Products hold stock-related 
 
 _____
 The app was developed with the IntelliJ IDE community version. As a result, 
-I have no access to certain features like 'already-JPA' queries.
-I had to whip out my native SQL writing skills as a result. It was quite refreshing tho.
+I had no access to certain features like 'already-made JPA' queries.
+I had to whip out my native SQL writing skills as a result. It was quite refreshing nonetheless.
 
