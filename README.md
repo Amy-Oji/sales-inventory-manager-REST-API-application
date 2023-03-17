@@ -204,32 +204,32 @@ ____
 
 The App currently make provision for only 2 types of users: admin and customer. 
 Authentication has not been implemented yet so there is no logging in. 
-
-### Enitities:
+____
+### Enitities
 
 The currently has four tables:
 
-##### Customers 
+##### Customers :
 
-Holds customer-users data
+*Holds customer-users data*
 
-##### Orders
+##### Orders:
 
-Holds data of purchased items and its related details
+*Holds data of purchased items and its related details*
 
-##### Products
+##### Products:
 
-Product data such as product name, amount in stock, price, etc.
+*Product data such as product name, amount in stock, price, etc.*
 
 ##### Order-details
 
-This table has a many to one relationship with both the orders and products table. 
+*This table has a many to one relationship with both the orders and products table. 
 Hold data about every single product in an order.
 Has fields like price-per-unit and quantity-ordered for each ordered product. 
 The difference between Orders and Order-details is that the latter hold the summary of each order
 the former has the data of each product in an order. 
 And in comparison to the Products table, 
-the Order-details hold order-related data while the Products hold stock-related data. 
+the Order-details hold order-related data while the Products hold stock-related data.*
 
 _____
 The app was developed with the IntelliJ IDE community version. As a result, 
