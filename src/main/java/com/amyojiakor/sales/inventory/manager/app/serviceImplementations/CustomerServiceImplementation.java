@@ -28,19 +28,16 @@ public class CustomerServiceImplementation implements CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    private final OrderDetailsRepository orderDetailsRepository;
-
     private final KafkaTemplate<String, CustomerOrderResponse> kafkaTemplate;
     private final String orderTopic;
 
     @Autowired
     public CustomerServiceImplementation(OrderRepository orderRepository, ProductRepository productRepository,
-                                         CustomerRepository customerRepository, OrderDetailsRepository orderDetailsRepository,
-                                         KafkaTemplate<String, CustomerOrderResponse> kafkaTemplate, @Value("${kafka.topic.order}") String orderTopic) {
+                                         CustomerRepository customerRepository, KafkaTemplate<String,
+            CustomerOrderResponse> kafkaTemplate, @Value("${kafka.topic.order}") String orderTopic) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.customerRepository = customerRepository;
-        this.orderDetailsRepository = orderDetailsRepository;
         this.kafkaTemplate = kafkaTemplate;
         this.orderTopic = orderTopic;
     }
@@ -51,58 +48,31 @@ public class CustomerServiceImplementation implements CustomerService {
     public CustomerOrderResponse placeOrder(CustomerOrderDTO customerOrderDTO) throws Exception {
         Order order = new Order();
         List<OrderDetails> orderDetailsList = new ArrayList<>();
-        Map<Long, Double> productDetails = new HashMap<>();
-
+        Map<Long, Double> productDetails = new LinkedHashMap<>();
+        // If customer phone number is provided, check if customer exists, else create a new customer
         if (customerOrderDTO.getCustomerPhoneNum() != null) {
-            Customer customer = customerRepository.findCustomerByPhoneNum(customerOrderDTO.getCustomerPhoneNum());
-            if (customer != null) {
-                order.setCustomer(customer);
-            } else {
-                Customer newCustomer = new Customer();
-                newCustomer.setName(customerOrderDTO.getCustomerName());
-                newCustomer.setPhoneNum(customerOrderDTO.getCustomerPhoneNum());
-                customerRepository.save(newCustomer);
-                order.setCustomer(newCustomer);
-            }
+            Customer customer = getOrCreateCustomer(customerOrderDTO);
+            order.setCustomer(customer);
         }
 
         Map<Long, Integer> orderProducts = customerOrderDTO.getProducts();
         double sum = 0;
 
+        // Loop through ordered products, check availability, and create order details
         for (Map.Entry<Long, Integer> entry : orderProducts.entrySet()) {
-            long productId = entry.getKey();
-            int quantity = entry.getValue();
-
-            var product = productRepository.findById(productId).orElseThrow(() -> new Exception("Product with ID '"+ productId + " does not exists." +
-                    " Please make your selection from our existing products"));
-            if(quantity > product.getAmountInStock()){
-                throw  new Exception("Product ID:" + productId + " with name: '" + product.getName() + "' is currently not available" +
-                        " Please make your selection from our available products");
-            }
-
-            product.setAmountInStock(product.getAmountInStock() - quantity);
-            var price = product.getPrice() * quantity;
-            sum = sum + price;
-
-            productDetails.put(productId, product.getPrice());
-
-            OrderDetails orderDetails = new OrderDetails();
-            orderDetails.setProduct(product);
-            orderDetails.setQuantityOrdered(quantity);
-            orderDetails.setPricePerUnit(product.getPrice());
-            orderDetails.setPriceXquantity(price);
-            orderDetails.setOrder(order);
+            OrderDetails orderDetails = createOrderDetails(entry);
+            sum += orderDetails.getPriceXquantity();
             orderDetailsList.add(orderDetails);
+            productDetails.put(orderDetails.getProduct().getId(), orderDetails.getProduct().getPrice());
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        var orderTime = LocalDateTime.now(ZoneId.of("Africa/Lagos"));
-        String orderTimeStr = orderTime.format(formatter);
+        LocalDateTime orderTime = LocalDateTime.now(ZoneId.of("Africa/Lagos"));
 
+        // Set up order and customerOrderResponse
         CustomerOrderResponse customerOrderResponse = new CustomerOrderResponse();
         customerOrderResponse.setCustomerOrderDTO(customerOrderDTO);
         customerOrderResponse.setSum(sum);
-        customerOrderResponse.setOrder_date(orderTimeStr);
+        customerOrderResponse.setOrder_date(orderTime);
         customerOrderResponse.setProductDetails(productDetails);
 
         order.setOrder_date(orderTime);
@@ -110,10 +80,52 @@ public class CustomerServiceImplementation implements CustomerService {
         order.setOrderDetails(orderDetailsList);
         orderRepository.save(order);
 
+        // Save changes to product repository and send Kafka message
+        saveOrderDetailsAndSendKafkaMessage(orderDetailsList, customerOrderResponse);
+
+        return customerOrderResponse;
+    }
+
+    private Customer getOrCreateCustomer(CustomerOrderDTO customerOrderDTO) {
+        Customer customer = customerRepository.findCustomerByPhoneNum(customerOrderDTO.getCustomerPhoneNum());
+        if (customer == null) {
+            customer = new Customer();
+            customer.setName(customerOrderDTO.getCustomerName());
+            customer.setPhoneNum(customerOrderDTO.getCustomerPhoneNum());
+            customerRepository.save(customer);
+        }
+        return customer;
+    }
+
+    private OrderDetails createOrderDetails(Map.Entry<Long, Integer> entry) throws Exception {
+        long productId = entry.getKey();
+        int quantity = entry.getValue();
+
+        var product = productRepository.findById(productId).orElseThrow(() -> new Exception("Product with ID '" + productId + " does not exists." +
+                " Please make your selection from our existing products"));
+        if (quantity > product.getAmountInStock()) {
+            throw new Exception("Product ID:" + productId + " with name: '" + product.getName() + "' is currently not available" +
+                    " Please make your selection from our available products");
+        }
+
+        product.setAmountInStock(product.getAmountInStock() - quantity);
+        var price = product.getPrice() * quantity;
+
+        OrderDetails orderDetails = new OrderDetails();
+        orderDetails.setProduct(product);
+        orderDetails.setQuantityOrdered(quantity);
+        orderDetails.setPricePerUnit(product.getPrice());
+        orderDetails.setPriceXquantity(price);
+
+        return orderDetails;
+    }
+
+    private void saveOrderDetailsAndSendKafkaMessage(List<OrderDetails> orderDetailsList, CustomerOrderResponse customerOrderResponse) {
         for (OrderDetails orderDetail : orderDetailsList) {
             productRepository.save(orderDetail.getProduct());
         }
         kafkaTemplate.send(orderTopic, customerOrderResponse);
-        return customerOrderResponse;
     }
+
+
 }

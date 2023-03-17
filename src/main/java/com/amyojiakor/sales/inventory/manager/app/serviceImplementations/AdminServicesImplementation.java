@@ -17,14 +17,11 @@ import java.util.stream.Collectors;
 @Service
 public class AdminServicesImplementation implements AdminServices {
 
-    private final CustomerRepository customerRepository;
-    private final OrderRepository orderRepository;
+
     private final ProductRepository productRepository;
 
     @Autowired
-    public AdminServicesImplementation(CustomerRepository customerRepository, OrderRepository orderRepository, ProductRepository productRepository) {
-        this.customerRepository = customerRepository;
-        this.orderRepository = orderRepository;
+    public AdminServicesImplementation(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
