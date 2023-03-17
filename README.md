@@ -19,7 +19,40 @@ The application supports the following operations:
 The app also publishes the basic detail of the created Order to Kafka for reporting.
 
 This resport is later consumed my the [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder)
+___
+#### Running/Testing The App
 
+*What you need:
+
+1. Postgres Database
+2. Kafka Installed
+3. IntelliJ IDE
+4. Postman
+
+*Running the Application
+
+1. Clone the repo both this repo as well as the [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder) 
+repo and open both with IntelliJ IDE on seperate windows.
+
+2. Create two databases on your Postgres
+
+3. update [application.properies](https://github.com/Amy-Oji/sales-inventory-manager-REST-API-application/blob/master/src/main/resources/application.properties) file on both projects with your database details accordingly.
+
+4. Open a terminal window and run this Kafka this command to start the ZooKeeper server process that Kafka uses for coordination and synchronization:
+
+zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties
+
+5. Open another teminal window and run this command to start the Kafka broker server process which allows producers and consumers to publish and consume messages to and from Kafka topics:
+
+kafka-server-start /opt/homebrew/etc/kafka/server.properties
+
+6. Run both projects. Run this one first.  
+
+7. Use Postman to test the enpoints with this base URL for admin user http://localhost:8080/api/v1/admin/ 
+the endpoints include: create-product, update-product/{product-id}, get-all-available-products
+and this base URL for customer user http://localhost:8080/api/v1/customer/ with this enpoint order-products
+For now, the application has only those end points. 
+ 
 ____
 #### Controllers
 
