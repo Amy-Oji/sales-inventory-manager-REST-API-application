@@ -41,19 +41,19 @@ repo and open both with IntelliJ IDE on seperate windows.
 
 4. Open a terminal window and run this Kafka this command to start the ZooKeeper server process that Kafka uses for coordination and synchronization:
 
-zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties
+```zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties```
 
 5. Open another teminal window and run this command to start the Kafka broker server process which allows producers and consumers to publish and consume messages to and from Kafka topics:
 
-kafka-server-start /opt/homebrew/etc/kafka/server.properties
+    ```kafka-server-start /opt/homebrew/etc/kafka/server.properties```
 
 6. Run both projects. Run this one first.  
 
 7. Use Postman to test the enpoints with this base URL for admin user http://localhost:8080/api/v1/admin/ 
-the endpoints include: 
-create-product, 
-update-product/{product-id}, 
-get-all-available-products
+*the endpoints include:*
+*create-product,*
+*update-product/{product-id},*
+*get-all-available-products*
 
 and this base URL for customer user http://localhost:8080/api/v1/customer/ with this enpoint 
 order-products
@@ -76,7 +76,8 @@ RequestBody => {
     "amountInStock": 100
     
 }
-*Returns the created product
+
+*Returns the created product*
 
 Response => {
 
@@ -105,7 +106,7 @@ Requeest Body => {
     
 }
 
-*Returns the updated product
+*Returns the updated product*
 
 Response => {
 
@@ -124,7 +125,7 @@ Request Type: GET
 
 URL => http://localhost:8080/api/v1/admin/get-all-available-products
 
-*Returns an array of available roducts
+*Returns an array of available roducts*
 
 Response =>  [
 
@@ -161,7 +162,7 @@ Request Type: POST
 
 URL => http://localhost:8080/api/v1/admin/get-all-available-products
 
-*"products" is a map of products IDs as key, and requested quanytity as values.
+*"products" is a map of products IDs as key, and requested quanytity as values.*
 
 Requeest Body => {
 
@@ -174,7 +175,7 @@ Requeest Body => {
 }
 
 *Returns details of the order which includes the sustomerOrderDTO that was used to make the request, 
-as well as a productDetails map with product IDs as keys and unit price of the product as values, the sum of the order and the date. 
+as well as a productDetails map with product IDs as keys and unit price of the product as values, the sum of the order and the date.*
 
 Response => {
 
