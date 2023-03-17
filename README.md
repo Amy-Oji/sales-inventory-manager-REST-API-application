@@ -23,14 +23,14 @@ The Kafka published resport is later consumed my this other project - [Sales Rep
 ___
 #### Running/Testing The App
 
-*What you need:
+__*What you need:*__
 
 1. Postgres Database
 2. Kafka Installed (For details on how to install Kafka MacOS, you can [FOLLOW THIS](https://medium.com/@taapasagrawal/installing-and-running-apache-kafka-on-macos-with-m1-processor-5238dda81d51))
 3. IntelliJ IDE
 4. Postman
 
-*Running the Application
+__*Running the Application*__
 
 1. Clone the repo both this repo as well as the [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder) 
 repo and open both with IntelliJ IDE on seperate windows.
