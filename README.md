@@ -125,7 +125,7 @@ Request Type: GET
 
 URL => http://localhost:8080/api/v1/admin/get-all-available-products
 
-*Returns an array of available roducts*
+*Returns an array of available products*
 
 Response =>  [
 
