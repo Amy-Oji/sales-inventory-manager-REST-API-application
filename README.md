@@ -26,7 +26,7 @@ ___
 *What you need:
 
 1. Postgres Database
-2. Kafka Installed (For details on how to install Kafka MacOS, [READ THIS](https://medium.com/@taapasagrawal/installing-and-running-apache-kafka-on-macos-with-m1-processor-5238dda81d51)
+2. Kafka Installed (For details on how to install Kafka MacOS, you can [FOLLOW THIS](https://medium.com/@taapasagrawal/installing-and-running-apache-kafka-on-macos-with-m1-processor-5238dda81d51))
 3. IntelliJ IDE
 4. Postman
 
