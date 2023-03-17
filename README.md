@@ -18,7 +18,8 @@ The application supports the following operations:
 
 The app also publishes the basic detail of the created Order to Kafka for reporting.
 
-This resport is later consumed my the [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder)
+The Kafka published resport is later consumed my this other project - [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder)
+
 ___
 #### Running/Testing The App
 
@@ -49,42 +50,134 @@ kafka-server-start /opt/homebrew/etc/kafka/server.properties
 6. Run both projects. Run this one first.  
 
 7. Use Postman to test the enpoints with this base URL for admin user http://localhost:8080/api/v1/admin/ 
-the endpoints include: create-product, update-product/{product-id}, get-all-available-products
-and this base URL for customer user http://localhost:8080/api/v1/customer/ with this enpoint order-products
-For now, the application has only those end points. 
- 
-____
-#### Controllers
-
-The App currently make provision for only 2 types of users: admin and customer. 
-Authentication has not been implemented yet so there is no logging in. 
-The admin endpoint include:
-
-create-product
-
-update-product/{product-id}
-
+the endpoints include: 
+create-product, 
+update-product/{product-id}, 
 get-all-available-products
 
-while the customers are meant to use only. 
+and this base URL for customer user http://localhost:8080/api/v1/customer/ with this enpoint 
+order-products
 
-order-products.
+For now, the application has only those end points. 
 
-To create an order, pass in a json pasyload like:
+### Sample Request and Response For Each Enpoint
 
-  "customerName": "John Doe",
+__create-product:__
+
+Request Type: POST
+
+URL => http://localhost:8080/api/v1/admin/create-product
+
+RequestBody => {
+
+    "name": "product 1",
+    "price": 100.0,
+    "description": "description for product one",
+    "amountInStock": 100
+    
+}
+*Returns the created product
+
+Response => {
+
+    "id": 3,
+    "name": "product 1",
+    "price": 100.0,
+    "description": "description",
+    "amountInStock": 100,
+    "available": true
+    
+}
+__update-product:__
+
+Request Type: POST
+
+URL => http://localhost:8080/api/v1/admin/update-product/{product-id}
+
+Requeest Body => {
+
+    "id": 3,
+    "name": "product 1",
+    "price": 100.0,
+    "description": "description",
+    "amountInStock": 100,
+    "available": true
+    
+}
+
+*Returns the updated product
+
+Response => {
+
+    "id": 1,
+    "name": "product 4",
+    "price": 100.0,
+    "description": "description",
+    "amountInStock": 200,
+    "available": true
+    
+}
+
+__get-all-available-products:__
+
+Request Type: GET
+
+URL => http://localhost:8080/api/v1/admin/get-all-available-products
+
+*Returns an array of available roducts
+
+Response =>  [
+
+    {
+        "id": 1,
+        "name": "product 124",
+        "price": 100.0,
+        "description": "description",
+        "amountInStock": 100,
+        "available": true
+    },
+    {
+        "id": 2,
+        "name": "product 12",
+        "price": 100.0,
+        "description": "description",
+        "amountInStock": 100,
+        "available": true
+    },
+    {
+        "id": 3,
+        "name": "product 1",
+        "price": 100.0,
+        "description": "description",
+        "amountInStock": 100,
+        "available": true
+    }
+    
+]
+
+__order-products__
+
+Request Type: POST
+
+URL => http://localhost:8080/api/v1/admin/get-all-available-products
+
+*"products" is a map of products IDs as key, and requested quanytity as values.
+
+Requeest Body => {
+
+    "customerName": "John Doe",
     "customerPhoneNum": "673ezff672a67r8",
     "products": {
         "1": 2,
         "2": 2
     }
-The products field is a map of order ids and quantity ordered.
-When you pass in the pay payload on the place order endpoint:
-http://localhost:8080/api/v1/customer/order-products
+}
 
-If there are no errors, it returns this payload:
+*Returns details of the order which includes the sustomerOrderDTO that was used to make the request, 
+as well as a productDetails map with product IDs as keys and unit price of the product as values, the sum of the order and the date. 
 
-{
+Response => {
+
     "customerOrderDTO": {
         "customerName": "John Doe",
         "customerPhoneNum": "673ezff672a67r8",
@@ -99,10 +192,17 @@ If there are no errors, it returns this payload:
     },
     "sum": 400.0,
     "order_date": "2023-03-17T07:28:25.317888"
+    
 }
 
-The returns back the customerOrderDTO payload and in addition, productDetails map of product Ids as keys and thier unit prices as values. 
-Then it reurns the sum of the order and the date of the order. 
+__NOTE__ The place-order method stack plublishes the above response for ecah order to Kafka.
+
+
+____
+#### Controllers
+
+The App currently make provision for only 2 types of users: admin and customer. 
+Authentication has not been implemented yet so there is no logging in. 
 
 ### Enitities:
 
@@ -113,8 +213,10 @@ Hold customer-users data
 
 ##### Orders
 Hold data of purchased items and its related details 
+
 ##### Products
 Product data such as product name, amount in stock, price, etc.
+
 ##### Order-details
 This table has a many to one relationship with both the orders and products table. 
 Hold data about every single product in an order.
@@ -123,7 +225,6 @@ The difference between Orders and Order-details is that the latter hold the summ
 the former has the data of each product in an order. 
 And in comparison to the Products table, 
 the Order-details hold order-related data while the Products hold stock-related data. 
-
 
 _____
 The app was developed with the IntelliJ IDE community version. As a result, 
