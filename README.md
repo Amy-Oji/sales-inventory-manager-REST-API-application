@@ -1,5 +1,7 @@
 # sales-inventory-manager-REST-API-application
-REST-API application for managing sales/inventory built with SpringBoot
+REST-API application for managing sales/inventory built with SpringBoot.
+
+I consider app to be a single-vender mini-ecommerce plaitform.
 
 The application supports the following operations:
 
@@ -19,6 +21,8 @@ The app also publishes the basic detail of the created Order to Kafka for report
 This resport is later consumed my the [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder)
 
 ____
+#### Controllers
+
 The App currently make provision for only 2 types of users: admin and customer. 
 Authentication has not been implemented yet so there is no logging in. 
 The admin endpoint include:
@@ -29,13 +33,43 @@ update-product/{product-id}
 
 get-all-available-products
 
-while the customers can only 
+while the customers are meant to use only. 
 
-order-products
+order-products.
 
-The app is more or less a single-vendor mini-e-commence app.
+To create an order, pass in a json pasyload like:
 
+  "customerName": "John Doe",
+    "customerPhoneNum": "673ezff672a67r8",
+    "products": {
+        "1": 2,
+        "2": 2
+    }
+The products field is a map of order ids and quantity ordered.
+When you pass in the pay payload on the place order endpoint:
+http://localhost:8080/api/v1/customer/order-products
 
+If there are no errors, it returns this payload:
+
+{
+    "customerOrderDTO": {
+        "customerName": "John Doe",
+        "customerPhoneNum": "673ezff672a67r8",
+        "products": {
+            "1": 2,
+            "2": 2
+        }
+    },
+    "productDetails": {
+        "1": 100.0,
+        "2": 100.0
+    },
+    "sum": 400.0,
+    "order_date": "2023-03-17T07:28:25.317888"
+}
+
+The returns back the customerOrderDTO payload and in addition, productDetails map of product Ids as keys and thier unit prices as values. 
+Then it reurns the sum of the order and the date of the order. 
 
 ### Enitities:
 
