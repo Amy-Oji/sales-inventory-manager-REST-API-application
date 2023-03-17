@@ -14,4 +14,6 @@ The application supports the following operations:
 * Save customer details
 
 
-The app also publishes the basic detail of the created Order to Kafka for reporting.
+The app also publishes the basic detail of the craeted Orders to Kafka for reporting. Thsi resport is consumed my the [Sales Report Application](https://github.com/Amy-Oji/kafka-reporder)
+
+
