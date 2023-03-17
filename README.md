@@ -210,15 +210,19 @@ Authentication has not been implemented yet so there is no logging in.
 The currently has four tables:
 
 ##### Customers 
-Hold customer-users data 
+
+Holds customer-users data
 
 ##### Orders
-Hold data of purchased items and its related details 
+
+Holds data of purchased items and its related details
 
 ##### Products
+
 Product data such as product name, amount in stock, price, etc.
 
 ##### Order-details
+
 This table has a many to one relationship with both the orders and products table. 
 Hold data about every single product in an order.
 Has fields like price-per-unit and quantity-ordered for each ordered product. 
