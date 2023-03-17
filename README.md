@@ -18,7 +18,7 @@ The application supports the following operations:
 
 The app also publishes the basic detail of the created Order to Kafka for reporting.
 
-The Kafka published resport is later consumed my this other project - [Sales Report Application](https://github.com/Amy-Oji/kafka-reporter)
+The Kafka published resport is later consumed and persisted by this other project - [Sales Report Application](https://github.com/Amy-Oji/kafka-reporter)
 
 ___
 #### Running/Testing The App 
