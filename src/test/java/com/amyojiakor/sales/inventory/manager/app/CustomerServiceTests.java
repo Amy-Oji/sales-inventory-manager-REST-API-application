@@ -19,11 +19,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class ApplicationTests {
+class CustomerServiceTests {
 
 	@Mock
 	private OrderRepository orderRepository;
