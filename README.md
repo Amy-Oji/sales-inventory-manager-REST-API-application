@@ -41,11 +41,11 @@ repo and open both with IntelliJ IDE on seperate windows.
 
 4. Open a terminal window and run this Kafka this command to start the ZooKeeper server process that Kafka uses for coordination and synchronization:
 
-```zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties```
+       ```zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties```
 
 5. Open another teminal window and run this command to start the Kafka broker server process which allows producers and consumers to publish and consume messages to and from Kafka topics:
 
-    ```kafka-server-start /opt/homebrew/etc/kafka/server.properties```
+        ```kafka-server-start /opt/homebrew/etc/kafka/server.properties```
 
 6. Run both projects. Run this one first.  
 
