@@ -1,9 +1,7 @@
 package com.amyojiakor.sales.inventory.manager.app.config;
 
 import com.amyojiakor.sales.inventory.manager.app.models.dto.CustomerOrderResponse;
-import com.amyojiakor.sales.inventory.manager.app.models.entities.Order;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
-
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -30,10 +27,8 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
-
     @Bean
     public KafkaTemplate<String, CustomerOrderResponse> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
-
 }

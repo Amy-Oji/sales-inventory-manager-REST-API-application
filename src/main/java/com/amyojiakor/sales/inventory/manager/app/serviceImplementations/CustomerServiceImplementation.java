@@ -127,5 +127,4 @@ public class CustomerServiceImplementation implements CustomerService {
         kafkaTemplate.send(orderTopic, customerOrderResponse);
     }
 
-
 }

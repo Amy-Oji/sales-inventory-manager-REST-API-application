@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/v1/customer/")
 public class CustomerController {
-
     private final CustomerService customerService;
     @Autowired
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-
 
     @PostMapping("order-products")
     public ResponseEntity<?> placeOrder(@RequestBody CustomerOrderDTO customerOrderDTO) throws Exception {
