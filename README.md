@@ -49,16 +49,28 @@ repo and open both with IntelliJ IDE on seperate windows.
 
 6. Run both projects. Run this one first.  
 
-7. Use Postman to test the enpoints with this base URL for admin user http://localhost:8080/api/v1/admin/ 
+7. Use Postman to test the enpoints with this base URL for admin user:
+ 
+ ```http://localhost:8080/api/v1/admin/```
+ 
 *the endpoints include:*
+
 *create-product,*
+
 *update-product/{product-id},*
+
 *get-all-available-products*
 
-and this base URL for customer user http://localhost:8080/api/v1/customer/ with this enpoint 
+and this base URL for customer user: 
+
+ ```http://localhost:8080/api/v1/customer/ with this enpoint```
+ 
+*which has just one endpoints:*
+
 order-products
 
-For now, the application has only those end points. 
+For now, the application has only those end points. You should access the endpoints in a logical order - create products first before trying any other functionality. 
+Not to worry, the app will not break if you don't folow the order, it will only throw exceptions. The app has an exception package to catch errors. 
 
 ### Sample Request and Response For Each Enpoint
 
