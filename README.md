@@ -63,8 +63,9 @@ repo and open both with IntelliJ IDE on seperate windows.
 
 and this base URL for customer user: 
 
- ```http://localhost:8080/api/v1/customer/ with this enpoint```
+```http://localhost:8080/api/v1/customer/ with this enpoint```
  
+
 *which has just one endpoints:*
 
 order-products
