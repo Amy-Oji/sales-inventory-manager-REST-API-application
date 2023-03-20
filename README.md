@@ -167,7 +167,7 @@ URL => http://localhost:8080/api/v1/admin/get-all-available-products
 Requeest Body => {
 
     "customerName": "John Doe",
-    "customerPhoneNum": "673ezff672a67r8",
+    "customerPhoneNum": "0123456789",
     "products": {
         "1": 2,
         "2": 2
@@ -181,7 +181,7 @@ Response => {
 
     "customerOrderDTO": {
         "customerName": "John Doe",
-        "customerPhoneNum": "673ezff672a67r8",
+        "customerPhoneNum": "0123456789",
         "products": {
             "1": 2,
             "2": 2
@@ -200,16 +200,24 @@ __NOTE__ The place-order method stack plublishes the above response for ecah ord
 
 
 ____
-#### Controllers
+### The Controllers
 
 The App currently make provision for only 2 types of users: admin and customer. 
 Authentication has not been implemented yet so there is no logging in. 
 ____
-### Enitities
+### The Services
+
+The service methods are defined in the interfaces, then service implementation classes are used to implement them accordingly. 
+Objects of the interfacese are used to call the mothods instead of objects of the service implementation classes. 
+Only helper methods are not defined in the interfaces. However, the helper methods are private methods and therefore they encapsulate internal logic and are made only accessible within the defining class.
+
+This way, the app is loosly coupled, flexible, maintainable and reusable while keeping details of its implementaion abstracted.
+____
+### The Enitities
 
 The currently has four tables:
 
-##### Customers :
+#### Customers :
 
 *Holds customer-users data*
 
@@ -232,7 +240,8 @@ And in comparison to the Products table,
 the Order-details hold order-related data while the Products hold stock-related data.*
 
 _____
-The app was developed with the IntelliJ IDE community version. As a result, 
-I had no access to certain features like 'already-made JPA' queries.
-I had to whip out my native SQL writing skills as a result. It was quite refreshing nonetheless.
+The app was developed with the IntelliJ IDE - community version. As a result, 
+I had limited access to certain features like 'already-made JPA' queries.
+This made me to whip out the good old native SQL queries as a result. 
 
+It was quite a refreshing projcet nonetheless.
